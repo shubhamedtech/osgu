@@ -1,0 +1,9 @@
+{
+    "require": {
+        "shuchkin/simplexlsxgen": "^1.0",
+        "setasign/fpdf": "^1.8",
+        "setasign/fpdi": "^2.3",
+        "nuovo/spreadsheet-reader": "^0.5.11",
+        "razorpay/razorpay": "^2.8"
+    }
+}

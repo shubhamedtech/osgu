@@ -1,0 +1,54 @@
+<div class="row">
+  <div class="col-md-7">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-2">
+            <img src="<?=$_SESSION['Photo']?>" height="170" width="100%">
+          </div>
+          <div class="col-md-9">
+            <h4><?=$_SESSION['Name']?></h4>
+            <p><b>Student ID:</b> <?=$_SESSION['Unique_ID']?></p>
+            <p><b>Adm. Session:</b> <?=$_SESSION['Admission_Session']?></p>
+            <p><b>Course:</b> <?=$_SESSION['Course_Sub_Course']?></p>
+            <p><b>Application Status:</b> <?php echo empty($_SESSION['Enrollment_No']) ? 'Pending' : 'Enrolled'?></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-5">
+    <div class="card">
+      <div class="card-body">
+        <h4>About Program</h4>
+        <p>Sikkim Alpine School of Vocational Training (SAU-SVS) has been providing various short and medium term vocational training and skill building programmes in multiple streams in a B.Voc scheme of UGC in collaboration with the industry, institutions with relevant industry interface and expertise in their subject/field of training to ensure that the course curriculum and training is in relevance with the practical industry requirements.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <div class="card" style="height: 404px">
+      <div class="card-header separator">
+        <h5>Basic Details</h5>
+      </div>
+      <div class="card-body">
+        <p class="m-t-10"><b>Father Name:</b> <?=$_SESSION['Father_Name']?></p>
+        <p><b>Mother Name:</b> <?=$_SESSION['Mother_Name']?></p>
+        <p><b>DOB:</b> <?=date("d-m-Y", strtotime($_SESSION['DOB']))?></p>
+        <p><b>Age:</b> <?=$_SESSION['Age']?></p>
+        <p><b>Current Address:</b> <?php $address = json_decode($_SESSION['Address']); echo $address->present_address ?></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card" style="height: 404px">
+      <div class="card-header separator">
+        <h5>Notices</h5>
+      </div>
+      <div class="card-body">
+        
+      </div>
+    </div>
+  </div>
+</div>

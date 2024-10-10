@@ -1,0 +1,123 @@
+<?php include($_SERVER['DOCUMENT_ROOT'] . '/includes/header-top.php'); ?>
+<?php include($_SERVER['DOCUMENT_ROOT'] . '/includes/header-bottom.php'); ?>
+<?php include($_SERVER['DOCUMENT_ROOT'] . '/includes/menu.php'); ?>
+<!-- START PAGE-CONTAINER -->
+<div class="page-container ">
+  <?php include($_SERVER['DOCUMENT_ROOT'] . '/includes/topbar.php'); ?>
+  <!-- START PAGE CONTENT WRAPPER -->
+  <div class="page-content-wrapper ">
+    <!-- START PAGE CONTENT -->
+    <div class="content ">
+      <!-- START JUMBOTRON -->
+      <div class="jumbotron" data-pages="parallax">
+        <div class=" container-fluid sm-p-l-0 sm-p-r-0">
+          <div class="inner">
+            <!-- START BREADCRUMB -->
+            <ol class="breadcrumb d-flex flex-wrap justify-content-between align-self-start">
+              <?php $breadcrumbs = array_filter(explode("/", $_SERVER['REQUEST_URI']));
+              for ($i = 1; $i <= count($breadcrumbs); $i++) {
+                if (count($breadcrumbs) == $i) : $active = "active";
+                  $crumb = explode("?", $breadcrumbs[$i]);
+                  echo '<li class="breadcrumb-item ' . $active . '">' . $crumb[0] . '</li>';
+                endif;
+              }
+              ?>
+              <div>
+
+              </div>
+            </ol>
+            <!-- END BREADCRUMB -->
+          </div>
+        </div>
+      </div>
+      <!-- END JUMBOTRON -->
+      <!-- START CONTAINER FLUID -->
+      <div class=" container-fluid">
+        <!-- BEGIN PlACE PAGE CONTENT HERE -->
+        <div class="row">
+          <div class="col-md-12" id="exam_data">
+            <?php
+            $start_exam = false;
+            $syllabus_id = 0;
+            $date_sheet_id = 0;
+            $exam_session = $conn->query("SELECT ID FROM Exam_Sessions WHERE JSON_KEYS(Admission_Session) LIKE '%" . $_SESSION['Admission_Session_ID'] . "%' ORDER BY ID DESC LIMIT 1");
+            if ($exam_session->num_rows > 0) {
+              $exam_session_id = $exam_session->fetch_assoc();
+              $exam_session_id = $exam_session_id['ID'];
+
+              $date_sheet = $conn->query("SELECT Date_Sheets.ID, Syllabus_ID FROM Date_Sheets LEFT JOIN Syllabi ON Date_Sheets.Syllabus_ID = Syllabi.ID WHERE Exam_Session_ID = " . $exam_session_id . " AND Exam_Date = '" . date('Y-m-d') . "' AND Syllabi.Sub_Course_ID = " . $_SESSION['Sub_Course_ID'] . "");
+              if ($date_sheet->num_rows > 0) {
+                $start_exam = true;
+                $date_sheet = $date_sheet->fetch_assoc();
+                $syllabus_id = $date_sheet['Syllabus_ID'];
+                $date_sheet_id = $date_sheet['ID'];
+            ?>
+                <div class="card">
+                  <div class="card-header seperator">
+                    <h4>Instructions</h4>
+                  </div>
+                  <div class="card-body">
+                    <ul>
+                      <li>All questions are mandatory.</li>
+                      <li>Proctoring is enable through your webcam and microphone.</li>
+                      <li>No cell phones or other secondary devices in the room or test area.</li>
+                      <li>Your desk/table must be clear or any materials except your test-taking device.</li>
+                      <li>No one else can be in the room with you.</li>
+                      <li>The testing room must be well-lit and you must be clearly visible.</li>
+                      <li>No dual screens/monitors.</li>
+                      <li>Do not leave the camera.</li>
+                      <li>No use of additional applications.</li>
+                    </ul>
+                    <br>
+                    <center>
+                      <h4>Good Luck with your Examination!</h4>
+                    </center>
+                  </div>
+                </div>
+                <div class="row d-flex justify-content-center">
+                  <button class="btn btn-primary" onclick="startExam()">Start</button>
+                </div>
+            <?php
+              } else {
+                echo '<center><h3>No Exams for today!</h3></center>';
+              }
+            } else {
+              echo '<center><h3>No Exams for today!</h3></center>';
+            }
+            ?>
+          </div>
+        </div>
+        <!-- END PLACE PAGE CONTENT HERE -->
+      </div>
+      <!-- END CONTAINER FLUID -->
+    </div>
+    <!-- END PAGE CONTENT -->
+    <?php include($_SERVER['DOCUMENT_ROOT'] . '/includes/footer-top.php'); ?>
+
+    <?php if ($start_exam) { ?>
+
+      <script type="text/javascript">
+        function startExam() {
+          $.ajax({
+            url: '/app/exams/start?date_sheet=<?= $date_sheet_id ?>&syllabus_id=<?= $syllabus_id ?>&id=' + <?= $_SESSION['ID'] ?>,
+            type: 'GET',
+            success: function(data) {
+              $("#exam_data").html(data);
+            }
+          })
+        }
+
+        function updateOverview() {
+          var checked = $('input[type=radio]:checked').size();
+          console.log(checked);
+        }
+      </script>
+
+    <?php
+      $check = $conn->query("SELECT ID FROM Exam_Attempts WHERE Student_ID = " . $_SESSION['ID'] . " AND Date_Sheet_ID = " . $date_sheet_id . "");
+      if ($check->num_rows > 0) {
+        echo '<script>startExam()</script>';
+      }
+    } ?>
+
+    <?php include($_SERVER['DOCUMENT_ROOT'] . '/includes/footer-bottom.php'); ?>
